@@ -16,15 +16,17 @@ while camara.isOpened():
         print ("No se pudo recibir la imagen de la cámara)")
         break
 
-    texto, esquinas, qrbinario = detector.detectAndDecode (imagen)
+    detectado, textos, esquinas, qrbinario = detector.detectAndDecodeMulti(imagen)
 
-    if texto != "" and esquinas is not None:
-        coordenadas = esquinas[0].astype(int)
-        
-        cv2.polylines (imagen, [coordenadas], isClosed = True, color = (245, 83, 2), thickness = 4)
-        xtexto, ytexto = coordenadas [0]
-        y2texto = max (25, ytexto - 10)
-        cv2.putText (imagen, texto, (xtexto, y2texto), cv2.FONT_HERSHEY_COMPLEX, 1, (245, 83, 2), 2)
+    if detectado:
+        for texto, esquina in zip(textos, esquinas):
+            if texto != "":
+                coordenadas = esquina.astype(int)
+                cv2.polylines (imagen, [coordenadas], isClosed=True, color=(245, 83, 2), thickness=2)
+                xtexto, ytexto = coordenadas[0]
+                
+                cv2.putText(imagen, texto, (xtexto, max(25, ytexto - 10)), cv2.FONT_HERSHEY_COMPLEX,
+                    0.8, (245, 83, 2), 2,)
 
     cv2.imshow('imagen', imagen)
     
